@@ -1,0 +1,30 @@
+{
+	"name": "cli-rt",
+	"version": "1.0.7",
+	"description": "CLI to start my projects easier",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"cli",
+		"react",
+		"templates",
+		"tailwind",
+		"styled-components"
+	],
+	"author": "Kostari",
+	"license": "ISC",
+	"bin": "./index.js",
+	"dependencies": {
+		"chalk": "^5.0.0",
+		"command-line-args": "^5.2.1",
+		"execa": "^6.0.0",
+		"figlet": "^1.5.2",
+		"inquirer": "^8.2.0",
+		"nanospinner": "^1.0.0",
+		"ncp": "^2.0.0",
+		"pkg-install": "^1.0.0"
+	}
+}
