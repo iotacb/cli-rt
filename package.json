@@ -1,6 +1,6 @@
 {
 	"name": "cli-rt",
-	"version": "1.0.7",
+	"version": "1.0.9",
 	"description": "CLI to start my projects easier",
 	"main": "index.js",
 	"type": "module",
@@ -11,13 +11,14 @@
 		"cli",
 		"react",
 		"templates",
-		"tailwind",
+		"tailwindcss",
 		"styled-components"
 	],
 	"author": "Kostari",
 	"license": "ISC",
 	"bin": "./index.js",
 	"dependencies": {
+		"boxen": "^6.2.1",
 		"chalk": "^5.0.0",
 		"command-line-args": "^5.2.1",
 		"execa": "^6.0.0",
@@ -25,6 +26,7 @@
 		"inquirer": "^8.2.0",
 		"nanospinner": "^1.0.0",
 		"ncp": "^2.0.0",
-		"pkg-install": "^1.0.0"
+		"pkg-install": "^1.0.0",
+		"update-check": "^1.5.4"
 	}
 }

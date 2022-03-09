@@ -3,6 +3,7 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
 import fs from "fs";
+import { readFile } from 'fs/promises';
 import ncp from "ncp";
 import path from "path";
 import commandLineArgs from "command-line-args";
@@ -10,6 +11,9 @@ import figlet from "figlet";
 import { promisify } from "util";
 import { createSpinner } from "nanospinner";
 import { projectInstall, install } from "pkg-install";
+import { fileURLToPath } from "url";
+import checkForUpdate from "update-check"
+import boxen from 'boxen';
 
 const access = promisify(fs.access);
 const copy = promisify(ncp);
@@ -19,15 +23,15 @@ let doInstallFirebase;
 let doInstallCustomDependencies;
 let projectName = "untitled-project";
 
-let test = false;
+const json = JSON.parse(await readFile(new URL('./package.json', import.meta.url)));
 
 const optionDefinitions = [
 	{ name: "packages", alias: "p", type: String, multiple: true },
 	{ name: "template", alias: "t", type: String },
 	{ name: "firebase", alias: "f", type: Boolean },
-	{ name: "test", alias: "g", type: Boolean },
 	{ name: "name", alias: "n", type: String },
 	{ name: "help", alias: "h", type: Boolean },
+	{ name: "version", alias: "v", type: Boolean },
 ];
 
 const args = commandLineArgs(optionDefinitions);
@@ -54,8 +58,23 @@ if (args.name) {
 	projectName = args.name;
 }
 
-if (args.test) {
-	test = true;
+if (args.version) {
+	console.log()
+}
+
+async function checkForUpdates() {
+	let update = null;
+	try {
+		update = await checkForUpdate(json);
+	} catch (err) {
+		console.log(`${chalk.bgRed.bold("ERROR")} failed to check for updates: ${err.message}`);
+	}
+
+	if (update) {
+		console.log(boxen(`There is an update available for ${chalk.bgGreen.bold('cli-rt')}\nUpdate by using ${chalk.red("'npm i cli-rt -g'")}!`, {padding: 1, borderColor: "cyan"}))
+	} else {
+		console.log(chalk.green(boxen(`You are using the latest version!`, {padding: 1})))
+	}
 }
 
 async function printTitle() {
@@ -83,18 +102,11 @@ async function createProject(options) {
 		targetDirectory: `${process.cwd()}/${options.project}`,
 	};
 
-	const currentFileUrl = import.meta.url;
-	console.log(currentFileUrl);
-	console.log(path.dirname(currentFileUrl));
-	console.log(new URL(currentFileUrl).pathname);
-
 	const templateDirectory = path.resolve(
-		new URL(currentFileUrl).pathname.substring(
-			test ? 0 : process.platform === "win32" ? 3 : 0
-		),
-		"../templates",
-		options.template.toLowerCase()
-	);
+        fileURLToPath(import.meta.url),
+        '../templates',
+        options.template.toLowerCase()
+    );
 
 	options.templateDirectory = templateDirectory;
 
@@ -316,7 +328,7 @@ async function handleTemplateType(answer, projectName) {
 		answer.toLowerCase() === "react with tailwindcss (chris's version)"
 	) {
 		await createProject({
-			template: "react-tailwindcss-chriss",
+			template: "react-tailwindcss-chris",
 			project: projectName,
 		});
 	}
@@ -351,8 +363,8 @@ async function printHelp() {
 	);
 }
 
-console.clear();
 printTitle();
+await checkForUpdates();
 
 if (args.help) {
 	await printHelp();
